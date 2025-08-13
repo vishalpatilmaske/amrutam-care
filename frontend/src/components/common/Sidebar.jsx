@@ -1,0 +1,56 @@
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+const Sidebar = () => {
+  const { user } = useSelector((state) => state.auth);
+
+  const commonClasses =
+    "block px-4 py-2 rounded-md transition-colors duration-200 hover:bg-[#3a643b] hover:text-white";
+  const activeClasses = "bg-[#3a643b] text-white";
+
+  const menuItems = {
+    admin: [
+      { name: "Dashboard", path: "/admin-dashboard" },
+      { name: "Manage Doctors", path: "/admin/doctors" },
+      { name: "Manage Users", path: "/admin/users" },
+      { name: "Appointments", path: "/admin/appointments" },
+    ],
+    doctor: [
+      { name: "Dashboard", path: "/doctor-dashboard" },
+      { name: "My Appointments", path: "/doctor/appointments" },
+      { name: "Availability", path: "/doctor/availability" },
+    ],
+    user: [
+      { name: "Dashboard", path: "/user-dashboard" },
+      { name: "Book Appointment", path: "/appointments/book" },
+      { name: "My Appointments", path: "/appointments" },
+      { name: "Doctors", path: "/doctors" },
+    ],
+  };
+
+  return (
+    <div
+      className="h-screen w-64 p-4"
+      style={{ backgroundColor: "#fcfffc", borderRight: "1px solid #e5e7eb" }}
+    >
+      <h2 className="text-xl font-bold mb-6 text-[#3a643b]">Amrutam Care</h2>
+
+      <nav className="flex flex-col gap-2">
+        {menuItems[user?.role]?.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) =>
+              `${commonClasses} ${isActive ? activeClasses : "text-gray-700"}`
+            }
+          >
+            {item.name}
+          </NavLink>
+        ))}
+      </nav>
+    </div>
+  );
+};
+
+export default Sidebar;
