@@ -7,11 +7,7 @@ export const registerUser = createAsyncThunk(
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/register`,
-        {
-          name,
-          email,
-          password,
-        }
+        { name, email, password }
       );
       return response.data;
     } catch (error) {
@@ -28,10 +24,7 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/login`,
-        {
-          email,
-          password,
-        }
+        { email, password }
       );
       localStorage.setItem("token", response.data.token);
       return response.data;
@@ -46,15 +39,11 @@ export const fetchUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
 
-      if (!token) {
-        throw new Error("No token found");
-      }
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/me`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       return response.data;
     } catch (error) {
@@ -70,6 +59,72 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
+export const fetchAllUsers = createAsyncThunk(
+  "auth/fetchAllUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/users`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch all users"
+      );
+    }
+  }
+);
+
+export const createDoctor = createAsyncThunk(
+  "auth/createDoctor",
+  async (doctorData, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/doctors`,
+        doctorData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to create doctor"
+      );
+    }
+  }
+);
+
+export const fetchAllDoctors = createAsyncThunk(
+  "auth/fetchAllDoctors",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/doctors`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch all doctors"
+      );
+    }
+  }
+);
+
 const initialState = {
   user: null,
   token: localStorage.getItem("token") || null,
@@ -77,6 +132,8 @@ const initialState = {
   error: null,
   success: false,
   message: null,
+  allUsers: [],
+  allDoctors: [], // Added to store doctors
 };
 
 const authSlice = createSlice({
@@ -89,6 +146,8 @@ const authSlice = createSlice({
       state.success = false;
       state.message = null;
       state.error = null;
+      state.allUsers = [];
+      state.allDoctors = [];
       localStorage.removeItem("token");
     },
     resetAuthState: (state) => {
@@ -109,7 +168,6 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.error = null;
         state.message = action.payload.message;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -117,6 +175,7 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.message = null;
       })
+
       // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -135,6 +194,7 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.message = null;
       })
+
       // FETCH USER
       .addCase(fetchUser.pending, (state) => {
         state.loading = true;
@@ -142,7 +202,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user; // { id, name, role }
+        state.user = action.payload.user;
         state.token = localStorage.getItem("token");
       })
       .addCase(fetchUser.rejected, (state, action) => {
@@ -151,6 +211,53 @@ const authSlice = createSlice({
           state.user = null;
           state.token = null;
         }
+        state.error = action.payload;
+      })
+
+      // FETCH ALL USERS
+      .addCase(fetchAllUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allUsers = action.payload;
+      })
+      .addCase(fetchAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // CREATE DOCTOR
+      .addCase(createDoctor.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(createDoctor.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.message = action.payload.message;
+        state.allUsers = [...state.allUsers, action.payload.data.user];
+        state.allDoctors = [...state.allDoctors, action.payload.data];
+      })
+      .addCase(createDoctor.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.message = null;
+      })
+
+      // FETCH ALL DOCTORS
+      .addCase(fetchAllDoctors.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllDoctors.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allDoctors = action.payload;
+      })
+      .addCase(fetchAllDoctors.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },

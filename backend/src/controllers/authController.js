@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/userSchema.js";
+import DoctorSchema from "../models/doctorSchema.js";
 
 // signup user
 export const registerUser = async (req, res) => {
@@ -124,6 +125,104 @@ export const getUser = async (req, res) => {
     res.status(401).json({
       status: false,
       message: "Invalid or expired token",
+    });
+  }
+};
+
+export const createDoctor = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      specialization,
+      mode,
+      experience,
+      consultationFee,
+      bio,
+      phone,
+      clinicAddress,
+    } = req.body;
+
+    // Check if email exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Email already exists" });
+    }
+
+    // Create user account with role "doctor"
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "doctor",
+    });
+
+    // Create doctor profile linked to userId
+    const newDoctor = await DoctorSchema.create({
+      userId: newUser._id,
+      specialization,
+      mode,
+      experience,
+      consultationFee,
+      bio,
+      phone,
+      clinicAddress,
+      availability: [],
+    });
+
+    res.status(201).json({
+      status: true,
+      message: "Doctor created successfully",
+      data: { user: newUser, doctor: newDoctor },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: false, message: "Server error", error: error.message });
+  }
+};
+
+// get all users
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+
+    res.status(200).json({
+      status: true,
+      message: "Users fetched successfully",
+      data: users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Server error while fetching users",
+      error: error.message,
+    });
+  }
+};
+
+// get all doctors data
+export const getAllDoctors = async (req, res) => {
+  try {
+    const doctors = await DoctorSchema.find().populate(
+      "userId",
+      "name email role"
+    );
+
+    res.status(200).json({
+      status: true,
+      message: "Doctors fetched successfully",
+      data: doctors,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Server error while fetching doctors",
+      error: error.message,
     });
   }
 };

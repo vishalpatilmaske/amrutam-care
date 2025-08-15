@@ -15,7 +15,11 @@ const Navbar = () => {
 
   return (
     <header className="bg-white shadow-md p-4 flex justify-between items-center">
-      <h1 className="text-lg font-semibold">Amrutam Care</h1>
+      <h1 className="text-lg font-semibold">
+        {user?.role === "admin"
+          ? "Welcome Admin Dashbord"
+          : "Welcome Doctor Dashborad"}
+      </h1>
       <div className="flex items-center gap-4">
         <span className="text-gray-600">{user?.name}</span>
         <button

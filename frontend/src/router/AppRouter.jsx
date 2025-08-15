@@ -16,14 +16,17 @@ import UserDashboard from "../pages/dashboards/UserDashboard";
 import AdminLayout from "../layouts/AdminLayout";
 import DoctorLayout from "../layouts/DoctorLayout";
 import UserLayout from "../layouts/UserLayout";
+import ManageDoctors from "../pages/admin/ManageDoctors";
+import ManageUsers from "../pages/admin/ManageUsers";
+import ManageAppointments from "../pages/admin/ManageAppointments";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user, token } = useSelector((state) => state.auth);
   if (!token) {
-    return <Navigate to="/auth" />;
+    return <Navigate to="/auth" replace />;
   }
-  if (!allowedRoles.includes(user?.role)) {
-    return <Navigate to="/auth" />;
+  if (!user || !allowedRoles.includes(user.role)) {
+    return <Navigate to="/auth" replace />;
   }
   return children;
 };
@@ -46,7 +49,7 @@ const AppContent = () => {
     if (user && location.pathname === "/auth") {
       const role = user.role;
       if (role === "admin") {
-        navigate("/admin-dashboard");
+        navigate("/admin");
       } else if (role === "doctor") {
         navigate("/doctor-dashboard");
       } else if (role === "user") {
@@ -65,15 +68,18 @@ const AppRouter = () => {
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
         <Route
-          path="/admin-dashboard"
+          path="/admin"
           element={
             <PrivateRoute allowedRoles={["admin"]}>
-              <AdminLayout>
-                <AdminDashboard />
-              </AdminLayout>
+              <AdminLayout />
             </PrivateRoute>
           }
-        />
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="manage-doctors" element={<ManageDoctors />} />
+          <Route path="manage-users" element={<ManageUsers />} />
+          <Route path="appointments" element={<ManageAppointments />} />
+        </Route>
         <Route
           path="/doctor-dashboard"
           element={
@@ -94,7 +100,7 @@ const AppRouter = () => {
             </PrivateRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/auth" />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     </Router>
   );

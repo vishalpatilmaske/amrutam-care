@@ -7,13 +7,13 @@ const Sidebar = () => {
 
   const commonClasses =
     "block px-4 py-2 rounded-md transition-colors duration-200 hover:bg-[#3a643b] hover:text-white";
-  const activeClasses = "bg-[#3a643b] text-white";
+  const activeClasses = "bg-[#3a643b] text-white font-semibold";
 
   const menuItems = {
     admin: [
-      { name: "Dashboard", path: "/admin-dashboard" },
-      { name: "Manage Doctors", path: "/admin/doctors" },
-      { name: "Manage Users", path: "/admin/users" },
+      { name: "Dashboard", path: "/admin" },
+      { name: "Manage Doctors", path: "/admin/manage-doctors" },
+      { name: "Manage Users", path: "/admin/manage-users" },
       { name: "Appointments", path: "/admin/appointments" },
     ],
     doctor: [
@@ -44,6 +44,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               `${commonClasses} ${isActive ? activeClasses : "text-gray-700"}`
             }
+            end={item.path === "/admin"}
           >
             {item.name}
           </NavLink>
