@@ -1,4 +1,5 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/common/Sidebar";
 import Navbar from "../components/common/NavBar";
 
@@ -10,7 +11,9 @@ const DoctorLayout = ({ children }) => {
       {/* <DoctorSidebar /> */}
       <div className="flex flex-col flex-1">
         <Navbar />
-        <main className="p-6 overflow-auto">{children}</main>
+        <main className="p-6 overflow-auto">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

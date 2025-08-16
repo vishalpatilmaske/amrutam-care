@@ -17,15 +17,14 @@ const Sidebar = () => {
       { name: "Appointments", path: "/admin/appointments" },
     ],
     doctor: [
-      { name: "Dashboard", path: "/doctor-dashboard" },
+      { name: "Dashboard", path: "/doctor" },
       { name: "My Appointments", path: "/doctor/appointments" },
-      { name: "Availability", path: "/doctor/availability" },
+      { name: "Manage Availability", path: "/doctor/availability" },
     ],
     user: [
-      { name: "Dashboard", path: "/user-dashboard" },
-      { name: "Book Appointment", path: "/appointments/book" },
-      { name: "My Appointments", path: "/appointments" },
-      { name: "Doctors", path: "/doctors" },
+      { name: "Dashboard", path: "/user" },
+      { name: "My Appointments", path: "/user/appointments" },
+      { name: "Doctors", path: "/user/doctors" },
     ],
   };
 

@@ -19,6 +19,9 @@ import UserLayout from "../layouts/UserLayout";
 import ManageDoctors from "../pages/admin/ManageDoctors";
 import ManageUsers from "../pages/admin/ManageUsers";
 import ManageAppointments from "../pages/admin/ManageAppointments";
+import UserDetails from "../pages/user/UserDetails";
+import DoctorProfiles from "../pages/user/DoctorProfiles";
+import ManageAvailability from "../pages/doctor/AvailabilitySlots";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user, token } = useSelector((state) => state.auth);
@@ -51,9 +54,9 @@ const AppContent = () => {
       if (role === "admin") {
         navigate("/admin");
       } else if (role === "doctor") {
-        navigate("/doctor-dashboard");
+        navigate("/doctor");
       } else if (role === "user") {
-        navigate("/user-dashboard");
+        navigate("/user");
       }
     }
   }, [user, location.pathname, navigate]);
@@ -81,25 +84,28 @@ const AppRouter = () => {
           <Route path="appointments" element={<ManageAppointments />} />
         </Route>
         <Route
-          path="/doctor-dashboard"
+          path="/doctor"
           element={
             <PrivateRoute allowedRoles={["doctor"]}>
-              <DoctorLayout>
-                <DoctorDashboard />
-              </DoctorLayout>
+              <DoctorLayout />
             </PrivateRoute>
           }
-        />
+        >
+          <Route index element={<DoctorDashboard />} />
+          <Route path="availability" element={<ManageAvailability />} />
+        </Route>
         <Route
-          path="/user-dashboard"
+          path="/user"
           element={
             <PrivateRoute allowedRoles={["user"]}>
-              <UserLayout>
-                <UserDashboard />
-              </UserLayout>
+              <UserLayout />
             </PrivateRoute>
           }
-        />
+        >
+          <Route index element={<UserDashboard />} />
+          <Route path="appointments" element={<UserDetails />} />
+          <Route path="doctors" element={<DoctorProfiles />} />
+        </Route>
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     </Router>
