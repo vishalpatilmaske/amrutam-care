@@ -22,6 +22,8 @@ import ManageAppointments from "../pages/admin/ManageAppointments";
 import UserDetails from "../pages/user/UserDetails";
 import DoctorProfiles from "../pages/user/DoctorProfiles";
 import ManageAvailability from "../pages/doctor/AvailabilitySlots";
+import CreateDoctor from "../pages/admin/CreateDoctor";
+import AppointmentCalendar from "../pages/appointments/AppointmentCalender";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user, token } = useSelector((state) => state.auth);
@@ -79,6 +81,7 @@ const AppRouter = () => {
           }
         >
           <Route index element={<AdminDashboard />} />
+          <Route path="create-doctor" element={<CreateDoctor />} />
           <Route path="manage-doctors" element={<ManageDoctors />} />
           <Route path="manage-users" element={<ManageUsers />} />
           <Route path="appointments" element={<ManageAppointments />} />
@@ -103,8 +106,9 @@ const AppRouter = () => {
           }
         >
           <Route index element={<UserDashboard />} />
-          <Route path="appointments" element={<UserDetails />} />
+          <Route path="appointments" element={<AppointmentCalendar />} />
           <Route path="doctors" element={<DoctorProfiles />} />
+          <Route path="book-appointment" element={<AppointmentCalendar />} />
         </Route>
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>

@@ -21,11 +21,7 @@ const Sidebar = () => {
       { name: "My Appointments", path: "/doctor/appointments" },
       { name: "Manage Availability", path: "/doctor/availability" },
     ],
-    user: [
-      { name: "Dashboard", path: "/user" },
-      { name: "My Appointments", path: "/user/appointments" },
-      { name: "Doctors", path: "/user/doctors" },
-    ],
+    user: [{ name: "Dashboard", path: "/user" }],
   };
 
   return (

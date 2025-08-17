@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-router.post("/lock", auth, allow("user"), lockSlot);
+router.post("/lock", lockSlot);
 router.post("/confirm", auth, allow("user"), confirmBooking);
 router.post("/release", auth, allow("user"), releaseSlot);
 

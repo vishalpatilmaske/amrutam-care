@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createDoctor, resetAuthState } from "../../redux/authSlice";
 
-const createDoctor = () => {
+const CreateDoctor = () => {
   const dispatch = useDispatch();
   const { loading, error, success, message } = useSelector(
     (state) => state.auth
@@ -28,7 +28,7 @@ const createDoctor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(resetAuthState()); // Clear previous messages
+    dispatch(resetAuthState());
 
     // Basic client-side validation
     const requiredFields = [
@@ -333,4 +333,4 @@ const createDoctor = () => {
   );
 };
 
-export default createDoctor;
+export default CreateDoctor;

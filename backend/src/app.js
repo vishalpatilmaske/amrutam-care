@@ -11,6 +11,6 @@ app.use(express.json());
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use("/api", authRoutes);
 app.use("/api/doctors", doctorRoutes);
-app.use("/api", appointmentRoutes);
+app.use("/api/appointment", appointmentRoutes);
 
 export default app;

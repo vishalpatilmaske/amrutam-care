@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllDoctors, resetAuthState } from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const ManageDoctors = () => {
   const dispatch = useDispatch();
   const { allDoctors, loading, error } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchAllDoctors());
@@ -15,7 +17,15 @@ const ManageDoctors = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-[#3a643b]">Manage Doctors</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-[#3a643b]">Manage Doctors</h2>
+        <button
+          onClick={() => navigate("/admin/create-doctor")}
+          className="bg-[#3a643b] text-white px-4 py-2 rounded-lg shadow hover:bg-[#2f4f2f] transition cursor-pointer"
+        >
+          Create Doctor Profile
+        </button>
+      </div>
 
       {error && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">

@@ -1,13 +1,13 @@
 // controllers/appointment.controller.js
 import dayjs from "dayjs";
-import DoctorSchema from "../models/doctorSchema.js";
+import doctorSchema from "../models/doctorSchema.js";
 import appointmentSchema from "../models/appointmentSchema.js";
 
 // body: { doctorId, date:"YYYY-MM-DD", time:"09:00 AM", duration }
 export const lockSlot = async (req, res) => {
   try {
     const { doctorId, date, time, duration } = req.body;
-    const doc = await DoctorSchema.findById(doctorId);
+    const doc = await doctorSchema.findById(doctorId);
     if (!doc)
       return res
         .status(404)

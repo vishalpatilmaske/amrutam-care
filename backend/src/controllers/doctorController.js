@@ -105,20 +105,28 @@ export const deleteSlot = async (req, res) => {
 export const getDoctorAvailableSlotsForUsers = async (req, res) => {
   try {
     const { doctorId } = req.params;
-    const { date } = req.query; // required
-    if (!date)
+    const { date } = req.query;
+    if (!date) {
       return res
         .status(400)
         .json({ status: false, message: "date is required" });
+    }
 
-    const doc = await Doctor.findById(doctorId);
-    if (!doc)
+    // Try to find by _id OR userId
+    const doc = await doctorSchema.findOne({
+      $or: [{ _id: doctorId }, { userId: doctorId }],
+    });
+
+    if (!doc) {
       return res
         .status(404)
         .json({ status: false, message: "Doctor not found" });
+    }
 
     const day = doc.availability.find((a) => a.date === date);
-    if (!day) return res.json({ status: true, slots: [] });
+    if (!day) {
+      return res.json({ status: true, slots: [] });
+    }
 
     const now = dayjs();
     const free = day.slots.filter((s) => {
@@ -126,12 +134,13 @@ export const getDoctorAvailableSlotsForUsers = async (req, res) => {
       return !s.isBooked && lockExpired;
     });
 
-    // sort by soonest (optional: convert "09:00 AM" to comparable)
+    // sort slots by time (convert 12hr → 24hr for comparison)
     const to24 = (t) => dayjs(t, ["hh:mm A"]).format("HH:mm");
     free.sort((a, b) => (to24(a.time) < to24(b.time) ? -1 : 1));
 
     return res.json({ status: true, slots: free });
   } catch (e) {
+    console.error(e);
     return res.status(500).json({ status: false, message: "Server error" });
   }
 };

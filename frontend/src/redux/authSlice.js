@@ -133,7 +133,7 @@ const initialState = {
   success: false,
   message: null,
   allUsers: [],
-  allDoctors: [], // Added to store doctors
+  allDoctors: [],
 };
 
 const authSlice = createSlice({

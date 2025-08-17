@@ -18,7 +18,7 @@ router.post("/login", validateRequest(loginSchema), loginUser);
 router.get("/me", getUser);
 
 router.post("/doctors", isAuthenticated, isAdmin, createDoctor);
-router.get("/doctors", isAuthenticated, isAdmin, getAllDoctors);
+router.get("/doctors", isAuthenticated, getAllDoctors);
 router.get("/users", isAuthenticated, isAdmin, getAllUsers);
 
 export default router;
